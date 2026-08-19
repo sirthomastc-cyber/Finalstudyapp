@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ZIMStudy AI</title>
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ONBOARDING -->
+  <section id="screen-onboarding" class="screen">
+    <div class="card">
+      <h1>LET'S BUILD YOUR STUDY SYSTEM</h1>
+      <p class="muted">A few details to set up your academic profile.</p>
+      <form id="onboarding-form">
+        <label>Your name<input type="text" id="ob-name" required /></label>
+        <label>School (optional)<input type="text" id="ob-school" /></label>
+        <label>Grade / Form<input type="text" id="ob-grade" /></label>
+        <label>Examination board<input type="text" id="ob-board" value="ZIMSEC" /></label>
+        <label>Examination year<input type="text" id="ob-year" /></label>
+        <button type="submit" class="btn primary full">Start</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- NAV (hidden on onboarding / timer) -->
+  <nav id="main-nav" class="main-nav hidden">
+    <button data-nav="dashboard">Dashboard</button>
+    <button data-nav="library">Library</button>
+    <button data-nav="teacher">AI Teacher</button>
+  <button data-nav="quiz">Quiz</button>
+  <button data-nav="examiner">Examiner</button>
+  <button data-nav="progress">Progress</button>
+  <button data-nav="mastery">Forecast</button>
+    <button data-nav="report">Report</button>
+    <button data-nav="agenda">Agenda</button>
+  </nav>
+
+  <!-- DASHBOARD -->
+  <section id="screen-dashboard" class="screen hidden">
+    <header class="topbar">
+      <h1 id="welcome-text">Welcome back</h1>
+      <button class="btn" data-nav="subjects">Manage Subjects</button>
+    </header>
+
+    <div class="card" id="exam-card">
+      <div class="label">NEXT EXAM</div>
+      <div id="exam-info" class="muted">No exam dates added yet.</div>
+      <form id="exam-form" class="inline-form">
+        <input type="text" id="exam-subject" placeholder="Subject" required />
+        <input type="text" id="exam-paper" placeholder="Paper #" />
+        <input type="date" id="exam-date" required />
+        <button type="submit" class="btn">Add exam</button>
+      </form>
+    </div>
+
+    <div class="card" id="mission-card">
+      <div class="label">TODAY'S MISSION</div>
+      <div id="mission-info" class="muted">Add subjects and quiz activity to get a suggestion.</div>
+    </div>
+    <div id="dashboard-kpis" class="kpi-grid"></div>
+
+    <h2>Your Subjects</h2>
+    <div id="subjects-list" class="subject-grid"></div>
+  </section>
+
+  <!-- FORMAL EXAMINER -->
+  <section id="screen-examiner" class="screen hidden">
+    <button class="btn back" data-nav="dashboard">&larr; Dashboard</button>
+    <h1>Examiner</h1>
+    <p class="muted">Formal assessment mode. Questions are marked and saved separately from practice Quiz.</p>
+    <div class="card" id="examiner-setup">
+      <div class="label">BUILD AN ASSESSMENT</div>
+      <div class="stack-form">
+        <input id="examiner-subject" placeholder="Subject" required />
+        <input id="examiner-topic" placeholder="Topic" required />
+        <div class="inline-form">
+          <label>Difficulty<select id="examiner-difficulty"><option value="1">1 · Foundation</option><option value="2" selected>2 · Standard</option><option value="3">3 · Stretch</option><option value="4">4 · Advanced</option><option value="5">5 · Challenge</option></select></label>
+          <label>Questions<input id="examiner-count" type="number" min="3" max="30" value="10" /></label>
+        </div>
+        <label class="checkbox-label"><input type="checkbox" id="examiner-use-docs" checked /> Ground in my Library</label>
+        <button class="btn primary" id="generate-exam-btn">Generate formal exam</button>
+        <div id="examiner-status" class="muted small"></div>
+      </div>
+    </div>
+    <div id="examiner-runner" class="card hidden">
+      <div id="examiner-progress" class="muted small"></div>
+      <div id="examiner-question" class="quiz-question"></div>
+      <div id="examiner-options" class="option-list"></div>
+      <button class="btn primary full" id="examiner-next">Next question</button>
+    </div>
+    <div id="examiner-complete" class="card hidden"></div>
+    <h2>Saved assessments</h2><div id="examiner-history" class="card"></div>
+  </section>
+
+  <!-- PROGRESS -->
+  <section id="screen-progress" class="screen hidden">
+    <h1>Progress</h1><p class="muted">Your real study, practice, and assessment data — estimates are labelled.</p>
+    <div id="progress-kpis" class="kpi-grid"></div>
+    <div class="card"><div class="label">SUBJECT MASTERY</div><div id="progress-subjects"></div></div>
+    <div class="split-grid"><div class="card"><div class="label">WEAK AREAS</div><div id="progress-weak"></div></div><div class="card"><div class="label">STRONG AREAS</div><div id="progress-strong"></div></div></div>
+    <div class="card"><div class="label">RECENT FORMAL RESULTS</div><div id="progress-results"></div></div>
+  </section>
+
+  <!-- SUBJECTS -->
+  <section id="screen-subjects" class="screen hidden">
+    <button class="btn back" data-nav="dashboard">&larr; Back</button>
+    <h1>Manage Subjects</h1>
+    <form id="subject-form" class="inline-form">
+      <input type="text" id="new-subject" placeholder="Add a subject" required />
+      <button type="submit" class="btn primary">Add</button>
+    </form>
+    <div id="subject-error" class="error hidden"></div>
+    <ul id="subject-manage-list" class="manage-list"></ul>
+  </section>
+
+  <!-- TIMER -->
+  <section id="screen-timer" class="screen hidden">
+    <div class="timer-wrap">
+      <div id="timer-subject" class="muted"></div>
+      <div id="timer-topic"></div>
+      <div id="timer-clock">00:00</div>
+      <div id="timer-interruptions" class="muted small"></div>
+      <div class="timer-controls">
+        <button class="btn" id="timer-pause">Pause</button>
+        <button class="btn primary" id="timer-complete">Complete Session</button>
+      </div>
+      <div id="timer-complete-state" class="card hidden"></div>
+      <button class="btn back" id="timer-cancel">Cancel</button>
+    </div>
+  </section>
+
+  <!-- LIBRARY (documents) -->
+  <section id="screen-library" class="screen hidden">
+    <h1>Library</h1>
+    <p class="muted">Upload textbooks, notes, and past papers. The AI Teacher can search these for grounded answers.</p>
+
+    <div class="card">
+      <div class="label">ADD FROM FILE (.txt · .md · .pdf · .docx)</div>
+      <form id="doc-upload-form" class="stack-form">
+        <input type="text" id="doc-title" placeholder="Title" required />
+        <select id="doc-type">
+          <option value="textbook">Textbook</option>
+          <option value="notes">Notes</option>
+          <option value="past_paper">Past paper</option>
+          <option value="marking_scheme">Marking scheme</option>
+          <option value="worksheet">Worksheet</option>
+        </select>
+        <input type="text" id="doc-subject" placeholder="Subject" />
+        <input type="file" id="doc-file" accept=".txt,.md,.pdf,.docx" required />
+        <button type="submit" class="btn primary">Upload</button>
+      </form>
+      <div id="doc-upload-status" class="muted small"></div>
+    </div>
+
+    <div class="card">
+      <div class="label">OR PASTE TEXT (notes, or a YouTube transcript)</div>
+      <form id="doc-paste-form" class="stack-form">
+        <input type="text" id="paste-title" placeholder="Title" required />
+        <input type="text" id="paste-subject" placeholder="Subject" />
+        <textarea id="paste-text" rows="4" placeholder="Paste text here..." required></textarea>
+        <button type="submit" class="btn">Add as document</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="label">LEARN FROM A YOUTUBE VIDEO</div>
+      <p class="muted small">No transcript API is available offline — paste the transcript from YouTube's own "Show transcript" button and it's processed like any other document.</p>
+      <form id="youtube-form" class="stack-form">
+        <input type="url" id="yt-url" placeholder="https://youtube.com/watch?v=..." required />
+        <input type="text" id="yt-subject" placeholder="Subject" />
+        <textarea id="yt-transcript" rows="4" placeholder="Paste transcript here..." required></textarea>
+        <button type="submit" class="btn">Add video transcript</button>
+      </form>
+    </div>
+
+    <h2>Search your documents</h2>
+    <form id="doc-search-form" class="inline-form">
+      <input type="text" id="doc-search-query" placeholder="e.g. enzymes, page 74..." />
+      <button type="submit" class="btn">Search</button>
+    </form>
+    <div id="doc-search-results"></div>
+
+    <h2>All documents</h2>
+    <ul id="documents-list" class="manage-list"></ul>
+  </section>
+
+  <!-- AI TEACHER -->
+  <section id="screen-teacher" class="screen hidden">
+    <h1>AI Teacher</h1>
+    <div id="ai-offline-banner" class="banner hidden">
+      AI Teacher is temporarily offline. Set an API key on the server to enable it
+      (see the README). In the meantime: review your Library, Quiz bank, and past sessions.
+    </div>
+    <div class="inline-form">
+      <input type="text" id="teacher-subject" placeholder="Subject" />
+      <input type="text" id="teacher-topic" placeholder="Topic" />
+      <label class="checkbox-label"><input type="checkbox" id="teacher-use-docs" checked /> Use my documents</label>
+    </div>
+    <div id="chat-log" class="chat-log"></div>
+    <form id="chat-form" class="inline-form">
+      <input type="text" id="chat-input" placeholder="Ask your AI Teacher..." autocomplete="off" />
+      <button type="button" class="btn" id="mic-btn" title="Talk to Teacher">&#127908;</button>
+      <button type="submit" class="btn primary">Send</button>
+    </form>
+    <p class="muted small">Voice uses your browser's built-in speech recognition/synthesis — nothing is sent anywhere except your typed or transcribed message.</p>
+  </section>
+
+  <!-- QUIZ / EXAMINER -->
+  <section id="screen-quiz" class="screen hidden">
+    <h1>AI Examiner</h1>
+    <p class="muted">"Prove you learned it." Mixed question types, spaced repetition, increasing difficulty.</p>
+
+    <div class="card">
+      <div class="label">GENERATE QUESTIONS WITH AI</div>
+      <div class="inline-form">
+        <input type="text" id="gen-subject" placeholder="Subject" />
+        <input type="text" id="gen-topic" placeholder="Topic" />
+        <button class="btn primary" id="gen-quiz-btn">Generate 5</button>
+      </div>
+      <div id="gen-quiz-status" class="muted small"></div>
+    </div>
+
+    <div class="card">
+      <div class="label">ADD A QUESTION MANUALLY</div>
+      <form id="quiz-add-form" class="stack-form">
+        <input type="text" id="qa-subject" placeholder="Subject" required />
+        <input type="text" id="qa-topic" placeholder="Topic" required />
+        <textarea id="qa-question" rows="2" placeholder="Question" required></textarea>
+        <textarea id="qa-answer" rows="2" placeholder="Answer"></textarea>
+        <button type="submit" class="btn">Add</button>
+      </form>
+    </div>
+
+    <h2>Prove You Learned It</h2>
+    <div class="inline-form">
+      <input type="text" id="quiz-subject-filter" placeholder="Subject (optional)" />
+      <button class="btn primary" id="start-quiz-btn">Start</button>
+    </div>
+    <div id="quiz-runner" class="card hidden">
+      <div id="quiz-progress" class="muted small"></div>
+      <div id="quiz-question" class="quiz-question"></div>
+      <div id="quiz-answer" class="quiz-answer hidden"></div>
+      <div class="timer-controls">
+        <button class="btn" id="quiz-reveal">Reveal Answer</button>
+        <button class="btn" id="quiz-wrong">Got it wrong</button>
+        <button class="btn primary" id="quiz-right">Got it right</button>
+      </div>
+    </div>
+    <div id="quiz-complete" class="card hidden">
+      <div class="label">SESSION COMPLETE</div>
+      <div id="quiz-summary"></div>
+    </div>
+  </section>
+
+  <!-- MASTERY / FORECAST -->
+  <section id="screen-mastery" class="screen hidden">
+    <h1>Mastery &amp; Grade Forecast</h1>
+    <p class="muted small">Estimated from quiz accuracy, consistency, and retention — not a guarantee of your real exam result.</p>
+    <div id="forecast-tally" class="tally-row"></div>
+    <div id="mastery-list"></div>
+  </section>
+
+  <!-- WEEKLY REPORT -->
+  <section id="screen-report" class="screen hidden">
+    <h1>Weekly Study Report</h1>
+    <div id="report-content" class="card"></div>
+  </section>
+
+  <!-- WEEKLY AGENDA -->
+  <section id="screen-agenda" class="screen hidden">
+    <h1>Weekly Learning Agenda</h1>
+    <form id="goal-form" class="stack-form">
+      <input type="text" id="goal-subject" placeholder="Subject" required />
+      <input type="text" id="goal-topic" placeholder="Topic" required />
+      <input type="number" id="goal-target" placeholder="Target mastery %" value="90" />
+      <button type="submit" class="btn primary">Add weekly goal</button>
+    </form>
+    <ul id="goals-list" class="manage-list"></ul>
+  </section>
+
+</div>
+
+<script src="/app.js"></script>
+</body>
+</html>

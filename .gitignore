@@ -1,0 +1,26 @@
+# Gradle
+.gradle/
+build/
+app/build/
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+.DS_Store
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Local config (never commit this — machine-specific SDK path)
+local.properties
+
+# Built artifacts
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# Web edition — local runtime data
+web/data/*.db
+__pycache__/
+*.pyc
