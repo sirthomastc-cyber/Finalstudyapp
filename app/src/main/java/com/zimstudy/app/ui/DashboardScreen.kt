@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -36,68 +35,149 @@ fun DashboardScreen(
     val exams by viewModel.exams.collectAsState()
 
     val nextExam = exams.minByOrNull { it.examDateMillis }
+
     val daysToExam = nextExam?.let {
         val diff = it.examDateMillis - System.currentTimeMillis()
-        TimeUnit.MILLISECONDS.toDays(diff).coerceAtLeast(0)
+
+        TimeUnit.MILLISECONDS
+            .toDays(diff)
+            .coerceAtLeast(0)
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(20.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(20.dp)
+    ) {
+
         Text(
-            "Welcome back, ${profile?.name ?: "Student"}",
+            text = "Welcome back, ${profile?.name ?: "Student"}",
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
-        Spacer(Modifier.height(12.dp))
+
+        Spacer(
+            modifier = Modifier.height(12.dp)
+        )
 
         if (nextExam != null) {
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(Modifier.padding(16.dp)) {
-                    Text("NEXT EXAM", style = MaterialTheme.typography.labelMedium)
+
+            Card(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+
                     Text(
-                        "${nextExam.subjectName} — Paper ${nextExam.paperNumber}",
+                        text = "NEXT EXAM",
+                        style = MaterialTheme.typography.labelMedium
+                    )
+
+                    Text(
+                        text = "${nextExam.subjectName} — Paper ${nextExam.paperNumber}",
                         style = MaterialTheme.typography.titleMedium
                     )
-                    Text("$daysToExam days remaining", style = MaterialTheme.typography.bodyLarge)
+
+                    Text(
+                        text = "$daysToExam days remaining",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
                 }
             }
+
         } else {
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(Modifier.padding(16.dp)) {
-                    Text("No exam dates added yet.", style = MaterialTheme.typography.bodyMedium)
+
+            Card(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+
+                    Text(
+                        text = "No exam dates added yet.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
             }
         }
 
-        Spacer(Modifier.height(20.dp))
+        Spacer(
+            modifier = Modifier.height(20.dp)
+        )
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("Your Subjects", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-            TextButton(onClick = onOpenSubjects) { Text("Manage") }
+
+            Text(
+                text = "Your Subjects",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+
+            TextButton(
+                onClick = onOpenSubjects
+            ) {
+                Text("Manage")
+            }
         }
 
         if (subjects.isEmpty()) {
-            Text("No subjects yet. Tap Manage to add some.", style = MaterialTheme.typography.bodyMedium)
+
+            Text(
+                text = "No subjects yet. Tap Manage to add some.",
+                style = MaterialTheme.typography.bodyMedium
+            )
+
         } else {
-            LazyColumn(modifier = Modifier.weight(1f)) {
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
+
                 items(subjects) { subject ->
+
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 6.dp)
                     ) {
+
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(16.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Column {
-                                Text(subject.name, style = MaterialTheme.typography.titleSmall)
-                                Text("Target: ${subject.targetGrade}", style = MaterialTheme.typography.bodySmall)
+
+                            Column(
+                                modifier = Modifier.weight(1f)
+                            ) {
+
+                                Text(
+                                    text = subject.name,
+                                    style = MaterialTheme.typography.titleSmall
+                                )
+
+                                Text(
+                                    text = "Target: ${subject.targetGrade}",
+                                    style = MaterialTheme.typography.bodySmall
+                                )
                             }
-                            Button(onClick = { onStartTimer(subject.name, "Focused session") }) {
+
+                            Button(
+                                onClick = {
+                                    onStartTimer(
+                                        subject.name,
+                                        "Focused session"
+                                    )
+                                }
+                            ) {
                                 Text("Start")
                             }
                         }
