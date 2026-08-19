@@ -1,189 +1,19 @@
 package com.zimstudy.app.ui
-
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zimstudy.app.StudyViewModel
 import java.util.concurrent.TimeUnit
-
 @Composable
-fun DashboardScreen(
-    viewModel: StudyViewModel,
-    onOpenSubjects: () -> Unit,
-    onStartTimer: (subject: String, topic: String) -> Unit
-) {
-    val profile by viewModel.profile.collectAsState()
-    val subjects by viewModel.subjects.collectAsState()
-    val exams by viewModel.exams.collectAsState()
-
-    val nextExam = exams.minByOrNull { it.examDateMillis }
-
-    val daysToExam = nextExam?.let {
-        val diff = it.examDateMillis - System.currentTimeMillis()
-
-        TimeUnit.MILLISECONDS
-            .toDays(diff)
-            .coerceAtLeast(0)
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(20.dp)
-    ) {
-
-        Text(
-            text = "Welcome back, ${profile?.name ?: "Student"}",
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(
-            modifier = Modifier.height(12.dp)
-        )
-
-        if (nextExam != null) {
-
-            Card(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-
-                    Text(
-                        text = "NEXT EXAM",
-                        style = MaterialTheme.typography.labelMedium
-                    )
-
-                    Text(
-                        text = "${nextExam.subjectName} — Paper ${nextExam.paperNumber}",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-
-                    Text(
-                        text = "$daysToExam days remaining",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }
-            }
-
-        } else {
-
-            Card(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-
-                    Text(
-                        text = "No exam dates added yet.",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
-        }
-
-        Spacer(
-            modifier = Modifier.height(20.dp)
-        )
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-
-            Text(
-                text = "Your Subjects",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-
-            TextButton(
-                onClick = onOpenSubjects
-            ) {
-                Text("Manage")
-            }
-        }
-
-        if (subjects.isEmpty()) {
-
-            Text(
-                text = "No subjects yet. Tap Manage to add some.",
-                style = MaterialTheme.typography.bodyMedium
-            )
-
-        } else {
-
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            ) {
-
-                items(subjects) { subject ->
-
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 6.dp)
-                    ) {
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-
-                            Column(
-                                modifier = Modifier.weight(1f)
-                            ) {
-
-                                Text(
-                                    text = subject.name,
-                                    style = MaterialTheme.typography.titleSmall
-                                )
-
-                                Text(
-                                    text = "Target: ${subject.targetGrade}",
-                                    style = MaterialTheme.typography.bodySmall
-                                )
-                            }
-
-                            Button(
-                                onClick = {
-                                    onStartTimer(
-                                        subject.name,
-                                        "Focused session"
-                                    )
-                                }
-                            ) {
-                                Text("Start")
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
+fun DashboardScreen(viewModel:StudyViewModel,onOpenSubjects:()->Unit,onStartTimer:(String,String)->Unit,onOpenFeature:(String)->Unit){
+ val profile by viewModel.profile.collectAsState(); val subjects by viewModel.subjects.collectAsState(); val exams by viewModel.exams.collectAsState(); val nextExam=exams.minByOrNull{it.examDateMillis}; val days=nextExam?.let{TimeUnit.MILLISECONDS.toDays((it.examDateMillis-System.currentTimeMillis()).coerceAtLeast(0))}
+ Column(Modifier.fillMaxSize().padding(20.dp)){ Text("Welcome back, ${profile?.name ?: "Student"}",style=MaterialTheme.typography.headlineSmall,fontWeight=FontWeight.Bold); Spacer(Modifier.height(12.dp)); Card(Modifier.fillMaxWidth()){Column(Modifier.padding(16.dp)){Text("NEXT EXAM",style=MaterialTheme.typography.labelMedium);Text(if(nextExam==null)"No exam dates added yet." else "${nextExam.subjectName} — Paper ${nextExam.paperNumber}",style=MaterialTheme.typography.titleMedium);if(days!=null)Text("$days days remaining")}}
+ Spacer(Modifier.height(16.dp)); Row(Modifier.fillMaxWidth(),Arrangement.SpaceBetween){Text("Your Subjects",style=MaterialTheme.typography.titleMedium,fontWeight=FontWeight.Bold);TextButton(onOpenSubjects){Text("Manage")}}
+ if(subjects.isEmpty())Text("No subjects yet. Tap Manage to add some.") else LazyColumn(Modifier.weight(1f)){items(subjects){subject->Card(Modifier.fillMaxWidth().padding(vertical=5.dp)){Row(Modifier.fillMaxWidth().padding(14.dp),Arrangement.SpaceBetween){Column(Modifier.weight(1f)){Text(subject.name);Text("Target: ${subject.targetGrade}",style=MaterialTheme.typography.bodySmall)};Button({onStartTimer(subject.name,"Focused session")}){Text("Start")}}}}}
+ Text("Study system",style=MaterialTheme.typography.titleMedium,fontWeight=FontWeight.Bold); listOf("AI Teacher" to "teacher","Practice Quiz" to "quiz","Formal Examiner" to "examiner","Progress" to "progress","Library" to "library","Weekly Report" to "report").chunked(2).forEach{pair->Row(Modifier.fillMaxWidth(),Arrangement.spacedBy(8.dp)){pair.forEach{(label,route)->Button({onOpenFeature(route)},Modifier.weight(1f)){Text(label)}}}}
+ }}
