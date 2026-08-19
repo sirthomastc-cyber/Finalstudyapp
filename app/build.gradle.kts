@@ -96,7 +96,7 @@ dependencies {
         "androidx.navigation:navigation-compose:2.8.5"
     )
 
-    // Room Database
+    // Room
     implementation(
         "androidx.room:room-runtime:2.7.0"
     )
@@ -128,4 +128,16 @@ dependencies {
     )
 
     androidTestImplementation(
-        "android
+        "androidx.test.espresso:espresso-core:3.6.1"
+    )
+
+    androidTestImplementation(
+        platform(
+            "androidx.compose:compose-bom:2024.12.01"
+        )
+    )
+
+    androidTestImplementation(
+        "androidx.compose.ui:ui-test-junit4"
+    )
+}
