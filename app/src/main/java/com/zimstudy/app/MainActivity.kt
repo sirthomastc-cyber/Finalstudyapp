@@ -17,6 +17,7 @@ import com.zimstudy.app.ui.DashboardScreen
 import com.zimstudy.app.ui.OnboardingScreen
 import com.zimstudy.app.ui.SubjectsScreen
 import com.zimstudy.app.ui.TimerScreen
+import com.zimstudy.app.ui.FeatureScreen
 
 class MainActivity : ComponentActivity() {
 
@@ -71,6 +72,9 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onCancel = { navController.popBackStack() }
                             )
+                        }
+                        listOf("teacher", "quiz", "examiner", "progress", "library", "report").forEach { route ->
+                            composable(route) { FeatureScreen(route) { navController.popBackStack() } }
                         }
                     }
                 }
